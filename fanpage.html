@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Justin Bieber Fanpage</title>
+
+  <link rel="stylesheet" href="fanpageCSS.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap');
+
+    body { margin: 0; padding: 0; font-family: 'Montserrat', sans-serif; }
+    html { scroll-behavior: smooth; }
+
+    /* ensure anchor targets don't sit under sticky nav */
+    [id] { scroll-margin-top: 72px; }
+
+    .animation-container { margin:0; padding:0; overflow:hidden; background:#000; }
+    .animation-container svg { width:100%; height:100vh; display:block; }
+
+    /* === NAVBAR === */
+    ul {
+      list-style:none;
+      margin:0;
+      padding:0;
+      background-color:black;
+      display:flex;
+      width:100%;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    ul li { flex:1; }
+    ul li a {
+      display:block; color:white; text-align:center; padding:16px 0;
+      text-decoration:none; font-weight:bold;
+      width:100%; transition:background-color .3s; font-size:1.5em;
+    }
+    ul li a:hover { background-color:#444; }
+
+    .embed-container { position:relative; padding-bottom:56.25%; height:0; overflow:hidden; max-width:100%; }
+    .embed-container iframe { position:absolute; top:0; left:0; width:100%; height:100%; }
+
+    .fa { padding:20px; font-size:30px; width:50px; text-align:center; text-decoration:none; margin:5px 2px; }
+    .fa:hover { opacity:0.7; }
+    .fa-facebook { background:#3B5998; color:white; }
+    .fa-twitter  { background:#55ACEE; color:white; }
+    .fa-youtube  { background:#bb0000; color:white; }
+    .fa-instagram{ background:#125688; color:white; }
+
+    .footer { left:0; bottom:0; width:100%; background-color:black; color:white; text-align:center; padding:12px 0; }
+
+    /* === SLIDER STYLES === */
+    .js-slider {
+      width: 90%;
+      max-width: 980px;
+      margin: 28px auto;
+      position: relative;
+      font-family: sans-serif;
+    }
+    .js-slider .slides {
+      position: relative;
+      overflow: hidden;
+      height: 460px;
+      border-radius: 8px;
+      box-shadow: 0 8px 20px rgba(0,0,0,.4);
+    }
+    .js-slider .slides img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity .8s ease;
+    }
+    .js-slider .slides img.active { opacity: 1; }
+
+    /* prev/next buttons */
+    .js-slider .nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,.5);
+      border: none;
+      color: #fff;
+      padding: 12px 14px;
+      cursor: pointer;
+      border-radius: 50%;
+      z-index: 10;
+      font-size: 18px;
+      box-shadow: 0 4px 10px rgba(0,0,0,.4);
+    }
+    .js-slider .prev { left: 12px; }
+    .js-slider .next { right: 12px; }
+    .js-slider .nav-btn:focus { outline: 2px solid #fff; }
+
+    /* dots */
+    .js-slider .dots {
+      display:flex;
+      gap:8px;
+      justify-content:center;
+      padding: 12px 0;
+    }
+    .js-slider .dot {
+      width: 12px; height: 12px; border-radius:50%;
+      background: rgba(0,0,0,.35);
+      border: 2px solid rgba(255,255,255,.6);
+      cursor: pointer;
+    }
+    .js-slider .dot.active { background: rgba(255,255,255,.95); border-color: rgba(255,255,255,1); }
+
+    @media (max-width: 700px) {
+      .js-slider .slides { height: 300px; }
+      ul li a { font-size: 1.2em; padding: 12px 0; }
+    }
+
+    /* === DISCOGRAPHY === */
+    .discography {
+      text-align: center;
+      padding: 50px 20px;
+      background-color: black;
+      color: white;
+    }
+    .discography h2 { font-size: 2.5em; margin-bottom: 40px; text-transform: uppercase; }
+    .albums-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; }
+    .album-card {
+      background: #333; border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      overflow: hidden; transition: transform 0.3s ease, box-shadow 0.3s ease;
+      width: 200px; text-align: left;
+    }
+    .album-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.5); }
+    .album-card img { width: 100%; height: auto; display: block; }
+    .album-card a { text-decoration: none; color: white; }
+    .album-info { padding: 15px; }
+    .album-info h3 { margin: 0 0 5px; font-size: 1.2em; }
+    .album-info p { margin: 0; font-size: 0.9em; color: #ccc; }
+    @media (max-width: 600px) { .album-card { width: 150px; } }
+
+    /* === TIMELINE === */
+    .timeline-section {
+      text-align: center; padding: 50px 20px;
+      background-color: black; color: white;
+    }
+    .timeline-section h2 { font-size: 2.5em; margin-bottom: 40px; text-transform: uppercase; }
+    .timeline { position: relative; max-width: 1000px; margin: 0 auto; }
+    .timeline .line {
+      position: sticky;
+      top: 10px;
+      width: 4px;
+      height: calc(100% - 20px);
+      background: white;
+      margin: 0 auto;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .timeline-container {
+      padding: 10px 40px; position: relative; background-color: inherit; width: 50%;
+    }
+    .timeline-container::after {
+      content: ''; position: absolute; width: 25px; height: 25px; right: -14px;
+      background-color: black; border: 4px solid white; top: 15px; border-radius: 50%; z-index: 1;
+    }
+    .left { left: 0; }
+    .right { left: 50%; }
+    .left::before {
+      content: " "; height: 0; position: absolute; top: 22px; width: 0; z-index: 1;
+      right: 30px; border: medium solid black; border-width: 10px 0 10px 10px;
+      border-color: transparent transparent transparent black;
+    }
+    .right::before {
+      content: " "; height: 0; position: absolute; top: 22px; width: 0; z-index: 1;
+      left: 30px; border: medium solid black; border-width: 10px 10px 10px 0;
+      border-color: transparent black transparent transparent;
+    }
+    .right::after { left: -12px; }
+    .timeline-content {
+      padding: 20px 30px; background-color: #333;
+      position: relative; border-radius: 6px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5); text-align: left;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="home" class="animation-container">
+    <svg viewBox="0 0 1280 720" aria-labelledby="title">
+      <title id="title">Justin Bieber Fanpage Intro</title>
+      <mask id="maskLeft"><rect x="-50%" width="100%" height="100%" fill="#fff"/></mask>
+      <mask id="maskRight"><rect x="50%" width="100%" height="100%" fill="#fff"/></mask>
+      <g font-size="150">
+        <g mask="url(#maskLeft)" fill="#fff" class="left">
+          <text x="0" y="120">Justin</text>
+          <text x="0" y="250">Bieber</text>
+          <text x="0" y="380">Fanpage</text>
+        </g>
+        <g mask="url(#maskRight)" fill="#aaa" class="right">
+          <text x="0" y="120">Justin</text>
+          <text x="0" y="250">Bieber</text>
+          <text x="0" y="380">Fanpage</text>
+        </g>
+      </g>
+    </svg>
+  </div>
+
+  <ul role="navigation" aria-label="Page sections">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#slider">Photos</a></li>
+    <li><a href="#latest-song">Latest Song</a></li>
+    <li><a href="#discography">Discography</a></li>
+    <li><a href="#timeline">Timeline</a></li>
+    <li><a href="#footer">Contact</a></li>
+  </ul>
+
+  <section id="slider" class="js-slider" aria-label="Justin Bieber images slider">
+    <div class="slides" id="slides">
+      <img src="justin1.jpg" alt="Justin Bieber 1" class="active">
+      <img src="justin2.jpg" alt="Justin Bieber 2">
+      <img src="justin3.jpg" alt="Justin Bieber 3">
+      <img src="justin4.jpg" alt="Justin Bieber 4">
+    </div>
+    <button class="nav-btn prev" id="prevBtn" aria-label="Previous slide">❮</button>
+    <button class="nav-btn next" id="nextBtn" aria-label="Next slide">❯</button>
+    <div class="dots" id="dots" aria-hidden="false"></div>
+  </section>
+
+  <h1 id="latest-song">Justin Bieber Latest Song</h1>
+  <div class="embed-container">
+    <iframe src="https://www.youtube.com/embed/fXivMSJm_kA"
+            title="Justin Bieber Latest Song"
+            frameborder="0"
+            allowfullscreen></iframe>
+  </div>
+
+  <section id="discography" class="discography">
+    <h2>Discography</h2>
+    <div class="albums-grid">
+      <div class="album-card">
+        <a href="https://open.spotify.com/album/5dGWwsZ9iB2Xc3UKR0gif2" target="_blank" rel="noopener">
+          <img src="Justin_Bieber_-_Justice.png" alt="Justice album cover">
+          <div class="album-info">
+            <h3>Justice</h3>
+            <p>Released: 2021</p>
+          </div>
+        </a>
+      </div>
+      <div class="album-card">
+        <a href="https://open.spotify.com/album/63iWSELt9V1kV6RSMxN7Ii" target="_blank" rel="noopener">
+          <img src="Justin_Bieber_-_Changes.png" alt="Changes album cover">
+          <div class="album-info">
+            <h3>Changes</h3>
+            <p>Released: 2020</p>
+          </div>
+        </a>
+      </div>
+      <div class="album-card">
+        <a href="https://open.spotify.com/track/1DaHV6z0fhWXSnn7UFNgpq" target="_blank" rel="noopener">
+          <img src="Justin_Bieber_-_Purpose.png" alt="Purpose album cover">
+          <div class="album-info">
+            <h3>Purpose</h3>
+            <p>Released: 2015</p>
+          </div>
+        </a>
+      </div>
+      <div class="album-card">
+        <a href="https://open.spotify.com/album/1rknZw4cyL9NInAqSwc8AA" target="_blank" rel="noopener">
+          <img src="Justin_Bieber_Journals.png" alt="Journals album cover">
+          <div class="album-info">
+            <h3>Journals</h3>
+            <p>Released: 2013</p>
+          </div>
+        </a>
+      </div>
+      <div class="album-card">
+        <a href="https://open.spotify.com/album/5cxMa6oLINJzmZ8lF7wWQN" target="_blank" rel="noopener">
+          <img src="Believe-JB-Album.jpg" alt="Believe album cover">
+          <div class="album-info">
+            <h3>Believe</h3>
+            <p>Released: 2012</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section id="timeline" class="timeline-section">
+    <h2>Career Timeline</h2>
+    <div class="timeline">
+      <div class="line"></div>
+
+      <div class="timeline-container left">
+        <div class="timeline-content">
+          <h3>2007 - The Start</h3>
+          <p>Justin Bieber begins posting covers of songs on YouTube, catching the attention of Scooter Braun.</p>
+        </div>
+      </div>
+
+      <div class="timeline-container right">
+        <div class="timeline-content">
+          <h3>2009 - Debut</h3>
+          <p>Releases debut single "One Time" and his first EP, "My World."</p>
+        </div>
+      </div>
+
+      <div class="timeline-container left">
+        <div class="timeline-content">
+          <h3>2010 - Global Stardom</h3>
+          <p>Releases debut album "My World 2.0" with hit song "Baby."</p>
+        </div>
+      </div>
+
+      <div class="timeline-container right">
+        <div class="timeline-content">
+          <h3>2015 - The Comeback</h3>
+          <p>Releases his fourth studio album "Purpose," marking a major comeback.</p>
+        </div>
+      </div>
+
+      <div class="timeline-container left">
+        <div class="timeline-content">
+          <h3>2020 - "Changes"</h3>
+          <p>Releases his fifth studio album "Changes," showcasing a mature R&B sound.</p>
+        </div>
+      </div>
+
+      <div class="timeline-container right">
+        <div class="timeline-content">
+          <h3>2021 - "Justice"</h3>
+          <p>Releases his sixth studio album "Justice," earning a Grammy nomination.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <a href="https://www.facebook.com/JustinBieber/" class="fa fa-facebook" aria-label="Facebook"></a>
+  <a href="https://x.com/justinbieber?" class="fa fa-twitter" aria-label="Twitter"></a>
+  <a href="https://www.youtube.com/@JustinBieberVEVO" class="fa fa-youtube" aria-label="YouTube"></a>
+  <a href="https://www.instagram.com/lilbieber/?hl=en" class="fa fa-instagram" aria-label="Instagram"></a>
+
+  <div id="footer" class="footer">
+    <h1>Justin Bieber Fan Community</h1>
+  </div>
+
+  <script>
+    /* Intro SVG animation (scoped to SVG so we don't hit timeline .left/.right) */
+    const tl = gsap.timeline({
+      defaults: { duration: 2, yoyo: true, ease: 'power2.inOut' }
+    })
+    .fromTo('svg .left, svg .right', {
+      svgOrigin: '640 500',
+      skewY: (i) => [-30, 15][i],
+      scaleX: (i) => [0.6, 0.85][i],
+      x: 200
+    }, {
+      skewY: (i) => [-15, 30][i],
+      scaleX: (i) => [0.85, 0.6][i],
+      x: -200
+    })
+    .play(0.5);
+
+    const tl2 = gsap.timeline();
+    document.querySelectorAll('svg text').forEach((t, i) => {
+      tl2.add(
+        gsap.fromTo(t, { xPercent: -100, x: 700 }, {
+          duration: 1,
+          xPercent: 0,
+          x: 575,
+          ease: 'sine.inOut'
+        }), i % 3 * 0.2
+      );
+    });
+
+    window.onpointermove = (e) => {
+      tl.pause(); tl2.pause();
+      gsap.to([tl, tl2], { duration: 2, ease: 'power4', progress: e.x / innerWidth });
+    };
+  </script>
+
+  <script>
+    /* Accessible, autoplaying, pausable slider */
+    (function () {
+      const slides = Array.from(document.querySelectorAll('#slides img'));
+      const dotsContainer = document.getElementById('dots');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      let current = 0;
+      let interval = null;
+      const AUTO_DELAY = 3500; // ms
+
+      // create dots
+      slides.forEach((_, i) => {
+        const d = document.createElement('button');
+        d.className = 'dot' + (i === 0 ? ' active' : '');
+        d.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+        d.addEventListener('click', () => { goTo(i); resetAuto(); });
+        dotsContainer.appendChild(d);
+      });
+      const dots = Array.from(dotsContainer.children);
+
+      function show(index) {
+        slides.forEach((s, i) => s.classList.toggle('active', i === index));
+        dots.forEach((d, i) => d.classList.toggle('active', i === index));
+      }
+
+      function prev() { current = (current - 1 + slides.length) % slides.length; show(current); }
+      function next() { current = (current + 1) % slides.length; show(current); }
+      function goTo(i) { current = (i + slides.length) % slides.length; show(current); }
+
+      prevBtn.addEventListener('click', () => { prev(); resetAuto(); });
+      nextBtn.addEventListener('click', () => { next(); resetAuto(); });
+
+      // autoplay
+      function startAuto() { interval = setInterval(next, AUTO_DELAY); }
+      function stopAuto()  { if (interval) { clearInterval(interval); interval = null; } }
+      function resetAuto() { stopAuto(); startAuto(); }
+
+      // pause on hover
+      const slider = document.querySelector('.js-slider');
+      slider.addEventListener('mouseenter', stopAuto);
+      slider.addEventListener('mouseleave', startAuto);
+
+      // keyboard support
+      slider.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') { prev(); resetAuto(); }
+        if (e.key === 'ArrowRight') { next(); resetAuto(); }
+      });
+      slider.setAttribute('tabindex', '0');
+
+      // initialize
+      show(current);
+      startAuto();
+    })();
+  </script>
+</body>
+</html>
